@@ -21,6 +21,7 @@ entity bitonic_split is
 end;
 
 architecture behav of bitonic_split is
+  signal en_out : std_logic := '0';
 begin
   gen_comps : for i in 0 to WIDTH-1 generate
     comp_proc : process (ap_clk)
@@ -46,10 +47,12 @@ begin
     end process comp_proc;
   end generate gen_comps;
   
+  ap_done <= en_out;
   done_proc: process(ap_clk)
   begin
     if rising_edge(ap_clk) then
-      ap_done <= ap_start;
+      en_out <= ap_start;
     end if;
   end process done_proc;
+
 end architecture behav;
