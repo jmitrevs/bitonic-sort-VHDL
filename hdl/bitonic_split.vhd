@@ -29,7 +29,7 @@ begin
       variable temp_b : entry_t;
     begin
       if rising_edge(ap_clk) then
-        if signed(in_a(i)(15 downto 0)) <= signed(in_b(i)(15 downto 0)) then
+        if signed(in_a(i)(15 downto 0)) > signed(in_b(i)(15 downto 0)) then
           temp_a := in_a(i);
           temp_b := in_b(i);
         else
