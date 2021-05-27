@@ -16,10 +16,10 @@ architecture behavioral of bitonic_split_TB is
   signal ap_clk : std_logic := '0';
   signal ap_start : std_logic := '0';
   signal ap_done : std_logic;
-  signal in_a : sort_inputs_t(0 to WIDTH-1) := (others => (others => '0'));
-  signal in_b : sort_inputs_t(0 to WIDTH-1) := (others => (others => '0'));
-  signal out_a : sort_inputs_t(0 to WIDTH-1);
-  signal out_b : sort_inputs_t(0 to WIDTH-1);
+  signal in_a : sort_inputs_t(WIDTH-1 downto 0) := (others => (others => '0'));
+  signal in_b : sort_inputs_t(WIDTH-1 downto 0) := (others => (others => '0'));
+  signal out_a : sort_inputs_t(WIDTH-1 downto 0);
+  signal out_b : sort_inputs_t(WIDTH-1 downto 0);
 
 begin
   DUV:  entity work.bitonic_split
@@ -41,10 +41,10 @@ begin
 
   stimuli: process
   begin
-    in_a(0) <= 64ux"2";
-    in_a(1) <= 64ux"23";
-    in_b(0) <= 64ux"25";
-    in_b(1) <= 64ux"4";
+    in_a(1) <= 64ux"2";
+    in_a(0) <= 64ux"23";
+    in_b(1) <= 64ux"25";
+    in_b(0) <= 64ux"4";
     wait for 50 ns;
     std.env.finish;
   end process stimuli;
@@ -53,10 +53,10 @@ begin
     begin
       if rising_edge(ap_clk) then
         report "New clock";
-        for i in 0 to WIDTH-1 loop
+        for i in WIDTH-1 downto 0 loop
           report "out_a " & to_string(i) & ": " & to_hstring(out_a(i));
         end loop;
-        for i in 0 to WIDTH-1 loop
+        for i in WIDTH-1 downto 0 loop
           report "out_b " & to_string(i) & ": " & to_hstring(out_b(i));
         end loop;
       end if;

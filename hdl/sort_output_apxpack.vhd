@@ -18,17 +18,17 @@ entity sort_output_apxpack is
     ap_clk : IN STD_LOGIC;
     ap_start : IN STD_LOGIC;
     ap_done : OUT STD_LOGIC;
-    sort_inputs : in sort_inputs_t(0 to NUM_INPUTS-1);
-    sort_outputs : out sort_inputs_t(0 to NUM_OUTPUTS-1)
+    sort_inputs : in sort_inputs_t(NUM_INPUTS-1 downto 0);
+    sort_outputs : out sort_inputs_t(NUM_OUTPUTS-1 downto 0)
   );
 end;
 
 architecture rtl of sort_output_apxpack is
     --- need to use the next power of 2 
-    signal full_inputs : sort_inputs_t(0 to NUM_INPUTS_PW2-1) := (others => (others => '0'));
-    signal full_outputs : sort_inputs_t(0 to NUM_INPUTS_PW2-1);
+    signal full_inputs : sort_inputs_t(NUM_INPUTS_PW2-1 downto 0) := (others => (others => '0'));
+    signal full_outputs : sort_inputs_t(NUM_INPUTS_PW2-1 downto 0);
 begin
-    full_inputs(0 to NUM_INPUTS-1) <= sort_inputs;
+    full_inputs(NUM_INPUTS-1 downto 0) <= sort_inputs;
 
     sorter_inst:  entity work.bitonic_sort
     generic map (
@@ -42,5 +42,5 @@ begin
         sort_outputs => full_outputs    
     );
 
-    sort_outputs <= full_outputs(0 to NUM_OUTPUTS-1);
+    sort_outputs <= full_outputs(NUM_OUTPUTS-1 downto 0);
 end architecture rtl; 

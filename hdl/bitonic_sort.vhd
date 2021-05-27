@@ -18,8 +18,8 @@ entity bitonic_sort is
     ap_clk : in std_logic;
     ap_start : in std_logic;
     ap_done : out std_logic;
-    sort_inputs : in sort_inputs_t(0 to WIDTH-1);
-    sort_outputs : out sort_inputs_t(0 to WIDTH-1)
+    sort_inputs : in sort_inputs_t(WIDTH-1 downto 0);
+    sort_outputs : out sort_inputs_t(WIDTH-1 downto 0)
   );
 end;
 
@@ -28,8 +28,8 @@ architecture rtl of bitonic_sort is
 begin
   -- recursive generate
   recursive_gen: if WIDTH_2 > 0 generate
-      signal intermed_a : sort_inputs_t(0 to WIDTH_2 - 1);
-      signal intermed_b : sort_inputs_t(0 to WIDTH_2 - 1);
+      signal intermed_a : sort_inputs_t(WIDTH_2-1 downto 0);
+      signal intermed_b : sort_inputs_t(WIDTH_2-1 downto 0);
       signal intermediate_enable : std_logic;
     begin
       sortp_inst: entity work.bitonic_sort
@@ -41,7 +41,7 @@ begin
         ap_clk => ap_clk,
         ap_start => ap_start,
         ap_done => intermediate_enable,
-        sort_inputs => sort_inputs(0 to WIDTH_2 - 1),
+        sort_inputs => sort_inputs(WIDTH-1 downto WIDTH_2),
         sort_outputs => intermed_a
       );
 
@@ -54,7 +54,7 @@ begin
         ap_clk => ap_clk,
         ap_start => ap_start,
         ap_done => open,
-        sort_inputs => sort_inputs(WIDTH_2 to WIDTH - 1),
+        sort_inputs => sort_inputs(WIDTH_2-1 downto 0),
         sort_outputs => intermed_b
       );
 
@@ -69,8 +69,8 @@ begin
         ap_done => ap_done,
         in_a => intermed_a,
         in_b => intermed_b,
-        out_a => sort_outputs(0 to WIDTH_2 - 1),
-        out_b => sort_outputs(WIDTH_2 to WIDTH - 1)
+        out_a => sort_outputs(WIDTH-1 downto WIDTH_2),
+        out_b => sort_outputs(WIDTH_2-1 downto 0)
       );
 
     else generate

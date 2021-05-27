@@ -13,23 +13,23 @@ entity bitonic_split is
     ap_clk : in std_logic;
     ap_start : in std_logic;
     ap_done : out std_logic;
-    in_a : in sort_inputs_t(0 to WIDTH - 1);
-    in_b : in sort_inputs_t(0 to WIDTH - 1);
-    out_a : out sort_inputs_t(0 to WIDTH - 1);
-    out_b : out sort_inputs_t(0 to WIDTH - 1)
+    in_a : in sort_inputs_t(WIDTH - 1 downto 0);
+    in_b : in sort_inputs_t(WIDTH - 1 downto 0);
+    out_a : out sort_inputs_t(WIDTH - 1 downto 0);
+    out_b : out sort_inputs_t(WIDTH - 1 downto 0)
   );
 end;
 
 architecture behav of bitonic_split is
   signal en_out : std_logic := '0';
 begin
-  gen_comps : for i in 0 to WIDTH-1 generate
+  gen_comps : for i in WIDTH-1 downto 0 generate
     comp_proc : process (ap_clk)
       variable temp_a : entry_t;
       variable temp_b : entry_t;
     begin
       if rising_edge(ap_clk) then
-        if signed(in_a(i)(15 downto 0)) > signed(in_b(i)(15 downto 0)) then
+        if signed(in_a(i)(15 downto 0)) <= signed(in_b(i)(15 downto 0)) then
           temp_a := in_a(i);
           temp_b := in_b(i);
         else
