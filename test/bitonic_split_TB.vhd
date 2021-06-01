@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-use work.sort_output_apxpack_pkg.all;
+use work.bitonic_sort_pkg.all;
 
 -- This sorts a sequence of WIDTh using a bitonic sort
 -- The WIDTH must be a power of 2
@@ -13,18 +13,22 @@ end;
 architecture behavioral of bitonic_split_TB is
   -- must be a power of 2
   constant WIDTH : natural := 2;
+  constant BIT_WIDTH : natural := 64;
+  constant COMPARISON_WIDTH : natural := 16;
   signal ap_clk : std_logic := '0';
   signal ap_start : std_logic := '0';
   signal ap_done : std_logic;
-  signal in_a : sort_inputs_t(WIDTH-1 downto 0) := (others => (others => '0'));
-  signal in_b : sort_inputs_t(WIDTH-1 downto 0) := (others => (others => '0'));
-  signal out_a : sort_inputs_t(WIDTH-1 downto 0);
-  signal out_b : sort_inputs_t(WIDTH-1 downto 0);
+  signal in_a : sort_inputs_t(WIDTH-1 downto 0)(BIT_WIDTH-1 downto 0) := (others => (others => '0'));
+  signal in_b : sort_inputs_t(WIDTH-1 downto 0)(BIT_WIDTH-1 downto 0) := (others => (others => '0'));
+  signal out_a : sort_inputs_t(WIDTH-1 downto 0)(BIT_WIDTH-1 downto 0);
+  signal out_b : sort_inputs_t(WIDTH-1 downto 0)(BIT_WIDTH-1 downto 0);
 
 begin
   DUV:  entity work.bitonic_split
   generic map (
-    WIDTH => WIDTH,
+    SORT_WIDTH => WIDTH,
+    BIT_WIDTH => BIT_WIDTH,
+    COMPARISON_WIDTH => COMPARISON_WIDTH,
     PLUS => true
   )
   port map (
