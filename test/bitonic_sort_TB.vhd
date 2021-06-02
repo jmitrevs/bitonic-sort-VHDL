@@ -12,7 +12,7 @@ end;
 
 architecture behavioral of bitonic_sort_TB is
   -- must be a power of 2
-  constant WIDTH : natural := 8;
+  constant WIDTH : natural := 16;
   constant BIT_WIDTH : natural := 64;
   constant COMPARISON_WIDTH : natural := 16;
   signal ap_clk : std_logic := '0';
@@ -41,16 +41,16 @@ begin
 
   stimuli: process
   begin
-    -- sort_inputs(15) <= 64ux"2e";
-    -- sort_inputs(14) <= 64ux"2ae";
-    -- sort_inputs(13) <= 64ux"35";
-    -- sort_inputs(12) <= 64ux"0";
-    -- sort_inputs(11) <= 64ux"345";
-    -- sort_inputs(10) <= 64ux"34";
-    -- sort_inputs(9) <= 64ux"1";
-    -- sort_inputs(8) <= 64ux"3f";
+    sort_inputs(15) <= 64ux"2e";
+    sort_inputs(14) <= 64ux"2ae";
+    sort_inputs(13) <= 64ux"35";
+    sort_inputs(12) <= 64ux"0";
+    sort_inputs(11) <= 64ux"345";
+    sort_inputs(10) <= 64ux"34";
+    sort_inputs(9) <= 64ux"1";
+    sort_inputs(8) <= 64ux"3f";
     sort_inputs(7) <= 64ux"26";
-    sort_inputs(6) <= 64ux"2";
+    sort_inputs(6) <= 64ux"62";
     sort_inputs(5) <= 64ux"772";
     sort_inputs(4) <= 64ux"4462";
     sort_inputs(3) <= 64ux"9";
@@ -59,18 +59,18 @@ begin
     sort_inputs(0) <= 64ux"4";
     ap_start <= '1';
     wait until ap_clk = '1';
-    -- sort_inputs(15) <= 64ux"12e";
-    -- sort_inputs(14) <= 64ux"12ae";
-    -- sort_inputs(13) <= 64ux"135";
-    -- sort_inputs(12) <= 64ux"0";
-    -- sort_inputs(11) <= 64ux"3453";
-    -- sort_inputs(10) <= 64ux"34e";
-    -- sort_inputs(9) <= 64ux"1";
-    -- sort_inputs(8) <= 64ux"3fa";
+    sort_inputs(15) <= 64ux"12e";
+    sort_inputs(14) <= 64ux"12ae";
+    sort_inputs(13) <= 64ux"135";
+    sort_inputs(12) <= 64ux"0";
+    sort_inputs(11) <= 64ux"3453";
+    sort_inputs(10) <= 64ux"34e";
+    sort_inputs(9) <= 64ux"1";
+    sort_inputs(8) <= 64ux"3fa";
     sort_inputs(7) <= 64ux"2a6";
     sort_inputs(6) <= 64ux"6a2";
     sort_inputs(5) <= 64ux"77a2";
-    sort_inputs(4) <= 64ux"446a2";
+    sort_inputs(4) <= 64ux"446a2";  --note, upper 4 is not used in comparison
     sort_inputs(3) <= 64ux"a9";
     sort_inputs(2) <= 64ux"2a3";
     sort_inputs(1) <= 64ux"25";
