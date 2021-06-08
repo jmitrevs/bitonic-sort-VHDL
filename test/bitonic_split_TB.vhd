@@ -12,7 +12,7 @@ end;
 
 architecture behavioral of bitonic_split_TB is
   -- must be a power of 2
-  constant WIDTH : natural := 2;
+  constant WIDTH : natural := 1;
   constant BIT_WIDTH : natural := 64;
   constant COMPARISON_WIDTH : natural := 16;
   signal ap_clk : std_logic := '0';
@@ -45,15 +45,20 @@ begin
 
   stimuli: process
   begin
-    in_a(1) <= 64ux"2";
+    --in_a(1) <= 64ux"2";
     in_a(0) <= 64ux"23";
-    in_b(1) <= 64ux"25";
+    --in_b(1) <= 64ux"25";
     in_b(0) <= 64ux"4";
-    ap_start <= '1';
-    ap_start <= '0' after 5 ns;
     wait for 50 ns;
     std.env.finish;
   end process stimuli;
+
+  ii2: process (ap_clk)
+  begin
+    if rising_edge(ap_clk) then
+      ap_start <= not ap_start;
+    end if;
+  end process ii2;
 
   checker:  process(ap_clk)
     begin
