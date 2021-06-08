@@ -49,6 +49,7 @@ begin
     in_a(0) <= 64ux"23";
     in_b(1) <= 64ux"25";
     in_b(0) <= 64ux"4";
+    ap_start <= '1';
     wait for 50 ns;
     std.env.finish;
   end process stimuli;

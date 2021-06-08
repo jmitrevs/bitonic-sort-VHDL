@@ -37,7 +37,7 @@ begin
     sort_outputs => sort_outputs
   );
 
-  ap_clk <= not ap_clk after 4.167 ns;
+  ap_clk <= not ap_clk after 0.5 ns;
 
   stimuli: process
   begin
