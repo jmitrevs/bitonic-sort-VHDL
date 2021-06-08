@@ -9,7 +9,8 @@ entity bitonic_split is
     SORT_WIDTH : positive;
     BIT_WIDTH : positive;
     COMPARISON_WIDTH: positive;
-    PLUS : boolean
+    PLUS : boolean;
+    REUSE_FACTOR : positive := 2   -- Also the II, must be power of 2, <= SORT_WIDTH
   );
   port (
     ap_clk : in std_logic;
@@ -23,9 +24,13 @@ entity bitonic_split is
 end;
 
 architecture behav of bitonic_split is
-  signal en_out : std_logic := '0';
+  -- make the RF be no greater than the SORT_WIDTH
+  constant RF : positive := regularize_rf(REUSE_FACTOR, SORT_WIDTH);
+  constant BLOCK_FACTOR : positive := SORT_WIDTH / RF;
+  constant START_IDX : start_idx_t(RF-1 downto 0) := start_indices(RF, BLOCK_FACTOR);
+  signal en_chain : std_logic_vector(RF-1 downto 0) := (others => '0');
 begin
-  gen_comps : for i in SORT_WIDTH-1 downto 0 generate
+  gen_comps : for i in BLOCK_FACTOR-1 downto 0 generate
     comp_proc : process (ap_clk)
       variable temp_a : std_logic_vector(BIT_WIDTH-1 downto 0);
       variable temp_b : std_logic_vector(BIT_WIDTH-1 downto 0);
@@ -48,13 +53,15 @@ begin
       end if;
     end process comp_proc;
   end generate gen_comps;
-  
-  ap_done <= en_out;
+   
+  ap_done <= en_chain(0);
   done_proc: process(ap_clk)
   begin
     if rising_edge(ap_clk) then
-      en_out <= ap_start;
+      if RF /= 1 then
+        en_chain(RF-2 downto 0) <= en_chain(RF-1 downto 1);
+      end if;
+      en_chain(RF-1) <= ap_start;
     end if;
   end process done_proc;
-
 end architecture behav;
