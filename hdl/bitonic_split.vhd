@@ -9,7 +9,8 @@ entity bitonic_split is
     SORT_WIDTH : positive;
     BIT_WIDTH : positive;
     COMPARISON_WIDTH: positive;
-    PLUS : boolean
+    PLUS : boolean;
+    II2 : boolean := True   -- False means II=1
   );
   port (
     ap_clk : in std_logic;
@@ -23,38 +24,47 @@ entity bitonic_split is
 end;
 
 architecture behav of bitonic_split is
-  signal en_out : std_logic := '0';
+  -- make the reuse factor (1 or 2)
+  constant RF : positive := calculate_rf(II2);
+  constant BLOCK_FACTOR : positive := SORT_WIDTH / RF;
+  signal en_chain : std_logic_vector(RF-1 downto 0) := (others => '0');
 begin
-  gen_comps : for i in SORT_WIDTH-1 downto 0 generate
+  gen_comps : for i in BLOCK_FACTOR-1 downto 0 generate
     comp_proc : process (ap_clk)
       variable temp_a : std_logic_vector(BIT_WIDTH-1 downto 0);
       variable temp_b : std_logic_vector(BIT_WIDTH-1 downto 0);
+      variable idx : integer;
     begin
       if rising_edge(ap_clk) then
-        if signed(in_a(i)(COMPARISON_WIDTH-1 downto 0)) <= signed(in_b(i)(COMPARISON_WIDTH-1 downto 0)) then
-          temp_a := in_a(i);
-          temp_b := in_b(i);
+        idx := BLOCK_FACTOR + i when en_chain(1) = '1' else i;
+
+        if signed(in_a(idx)(COMPARISON_WIDTH-1 downto 0)) <= signed(in_b(idx)(COMPARISON_WIDTH-1 downto 0)) then
+          temp_a := in_a(idx);
+          temp_b := in_b(idx);
         else
-          temp_a := in_b(i);
-          temp_b := in_a(i);
+          temp_a := in_b(idx);
+          temp_b := in_a(idx);
         end if;
         if PLUS then
-          out_a(i) <= temp_a;
-          out_b(i) <= temp_b;
+          out_a(idx) <= temp_a;
+          out_b(idx) <= temp_b;
         else
-          out_a(i) <= temp_b;
-          out_b(i) <= temp_a;
+          out_a(idx) <= temp_b;
+          out_b(idx) <= temp_a;
         end if;
       end if;
     end process comp_proc;
   end generate gen_comps;
-  
-  ap_done <= en_out;
+   
+  ap_done <= en_chain(0);
   done_proc: process(ap_clk)
   begin
     if rising_edge(ap_clk) then
-      en_out <= ap_start;
+      if RF /= 1 then
+        en_chain(RF-2 downto 0) <= en_chain(RF-1 downto 1);
+      end if;
+      en_chain(RF-1) <= ap_start;
     end if;
   end process done_proc;
-
+  
 end architecture behav;
