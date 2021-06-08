@@ -41,7 +41,7 @@ begin
     out_b => out_b
   );
 
-  ap_clk <= not ap_clk after 4.167 ns;
+  ap_clk <= not ap_clk after 5 ns;
 
   stimuli: process
   begin
@@ -50,6 +50,7 @@ begin
     in_b(1) <= 64ux"25";
     in_b(0) <= 64ux"4";
     ap_start <= '1';
+    ap_start <= '0' after 5 ns;
     wait for 50 ns;
     std.env.finish;
   end process stimuli;

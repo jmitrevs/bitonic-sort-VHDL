@@ -13,7 +13,7 @@ package body bitonic_sort_pkg is
 
   function calculate_rf ( ii2 : boolean; sort_width : positive) return positive is
   begin
-    if sort_width <= 2 then
+    if sort_width < 2 then
       return 1;
     elsif ii2 then
       return 2;
