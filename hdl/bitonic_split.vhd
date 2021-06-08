@@ -25,7 +25,7 @@ end;
 
 architecture behav of bitonic_split is
   -- make the reuse factor (1 or 2)
-  constant RF : positive := calculate_rf(II2);
+  constant RF : positive := calculate_rf(II2, SORT_WIDTH);
   constant BLOCK_FACTOR : positive := SORT_WIDTH / RF;
   signal en_chain : std_logic_vector(RF-1 downto 0) := (others => '0');
 begin
