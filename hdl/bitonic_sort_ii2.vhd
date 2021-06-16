@@ -39,11 +39,11 @@ begin
 
   -- recursive generate
   recursive_gen: if SORT_WIDTH_2 > 0 generate
-      signal inputs : sort_inputs_shr_t(1 downto 0)(SORT_WIDTH_2-1 downto 0)(BIT_WIDTH - 1 downto 0);
-      signal inputs_plus : std_logic_vector(1 downto 0) := "00";
+      signal inputs : sort_inputs_t(SORT_WIDTH_2-1 downto 0)(BIT_WIDTH - 1 downto 0);
+      signal inputs_plus : std_logic;
       signal intermediate_shr : sort_inputs_shr_t(1 downto 0)(SORT_WIDTH_2-1 downto 0)(BIT_WIDTH - 1 downto 0);
-      signal intermediate_enable : std_logic_vector(1 downto 0);
-      signal intermediate_first : std_logic := '0';  -- the first of two
+      signal intermediate_enable : std_logic_vector(1 downto 0) := "00";
+      signal intermediate_second : std_logic := '0';  -- the second of two
       signal outputs : sort_inputs_shr_t(1 downto 0)(SORT_WIDTH_2-1 downto 0)(BIT_WIDTH - 1 downto 0);
     begin
 
@@ -52,16 +52,14 @@ begin
         if rising_edge(ap_clk) then
           if ap_start = '1' and ready = '1' then
             ready <= '0';
-            inputs(1) <= sort_inputs(SORT_WIDTH-1 downto SORT_WIDTH_2);
-            inputs(0) <= sort_inputs(SORT_WIDTH_2-1 downto 0);
-            inputs_plus <= "10";
           else
             ready <= '1';
-            inputs(1) <= inputs(0);
-            inputs_plus(1) <= inputs_plus(0);
           end if;
         end if;
       end process input_proc;
+
+      inputs <= sort_inputs(SORT_WIDTH-1 downto SORT_WIDTH_2) when ready = '1' else sort_inputs(SORT_WIDTH_2-1 downto 0);
+      inputs_plus <= ready;
 
       sort_inst: entity work.bitonic_sort
       generic map (
@@ -73,16 +71,17 @@ begin
         ap_clk => ap_clk,
         ap_start => ap_start,
         ap_done => intermediate_enable(0),
-        sort_inputs => inputs(1),
+        sort_inputs => inputs,
         sort_outputs => intermediate_shr(0),
-        plus => inputs_plus(1)
+        plus => inputs_plus
       );
 
       intermed_proc: process(ap_clk)
       begin
         if rising_edge(ap_clk) then
-          intermediate_first <= intermediate_enable(0) and not intermediate_first;
+          intermediate_second <= intermediate_enable(0) and not intermediate_second;
           intermediate_enable(1) <= intermediate_enable(0);
+          intermediate_shr(1) <= intermediate_shr(0);
         end if;
       end process intermed_proc;
 
@@ -94,10 +93,10 @@ begin
       )
       port map (
         ap_clk => ap_clk,
-        ap_start => intermediate_enable(1) and not intermediate_first,
+        ap_start => intermediate_enable(1) and intermediate_second,
         ap_done => ap_done,
-        in_a => intermediate_shr(0),
-        in_b => intermediate_shr(1),
+        in_a => intermediate_shr(1),
+        in_b => intermediate_shr(0),
         out_a => sort_outputs(SORT_WIDTH-1 downto SORT_WIDTH_2),
         out_b => sort_outputs(SORT_WIDTH_2-1 downto 0),
         plus => plus

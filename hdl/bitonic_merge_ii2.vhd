@@ -40,13 +40,14 @@ begin
   recursive_gen: if SORT_WIDTH_2 > 0 generate
       signal intermed_a : sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
       signal intermed_b : sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
+      signal intermed_b_latched : sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
       signal intermed : sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
       signal intermediate_enable : std_logic_vector(1 downto 0) := "00";
       signal out_part : sort_inputs_shr_t(1 downto 0)(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
       signal done_part : std_logic_vector(1 downto 0) := "00";
     begin
 
-      intermed <= intermed_a when intermediate_enable(0) = '1' else intermed_b;
+      intermed <= intermed_a when intermediate_enable(0) = '1' else intermed_b_latched;
 
       split_inst: entity work.bitonic_split_ii2
       generic map (
@@ -69,6 +70,7 @@ begin
       begin
         if rising_edge(ap_clk) then
           intermediate_enable(1) <= intermediate_enable(0);
+          intermed_b_latched <= intermed_b;
         end if;
       end process intermed_proc;
 
