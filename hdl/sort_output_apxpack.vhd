@@ -32,7 +32,7 @@ architecture rtl of sort_output_apxpack is
 begin
     full_inputs(NUM_INPUTS-1 downto 0) <= sort_inputs;
 
-    sorter_inst:  entity work.bitonic_sort
+    sorter_inst:  entity work.bitonic_sort_ii2
     generic map (
         SORT_WIDTH => NUM_INPUTS_PW2,
         BIT_WIDTH => NUM_BITS,
