@@ -24,7 +24,7 @@ architecture behavioral of bitonic_split_TB is
   signal out_b : sort_inputs_t(WIDTH-1 downto 0)(BIT_WIDTH-1 downto 0);
 
 begin
-  DUV:  entity work.bitonic_split
+  DUV:  entity work.bitonic_split_ii2
   generic map (
     SORT_WIDTH => WIDTH,
     BIT_WIDTH => BIT_WIDTH,
@@ -49,6 +49,12 @@ begin
     in_a(0) <= 64ux"23";
     in_b(1) <= 64ux"25";
     in_b(0) <= 64ux"4";
+    wait until ap_clk'event and ap_clk = '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+
     wait for 50 ns;
     std.env.finish;
   end process stimuli;
@@ -63,6 +69,7 @@ begin
         for i in WIDTH-1 downto 0 loop
           report "out_b " & to_string(i) & ": " & to_hstring(out_b(i));
         end loop;
+        report "ap_done " & to_string(ap_done);
       end if;
     end process checker; 
 end architecture behavioral;
