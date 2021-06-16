@@ -91,7 +91,7 @@ begin
         plus => plus
       );
 
-      ap_done <= done_part(1);
+      ap_done <= and done_part;
       out_a <= out_part(1);
       out_b <= out_part(0);
 
