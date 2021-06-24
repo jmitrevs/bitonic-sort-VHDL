@@ -91,7 +91,7 @@ begin
         plus => PLUS
       );
 
-      ap_done <= and done_part;
+      ap_done <= done_part(1);
       out_a <= out_part(1);
       out_b <= out_part(0);
 
@@ -99,7 +99,7 @@ begin
       begin
         if rising_edge(ap_clk) then
           out_part(1) <= out_part(0);
-          done_part(1) <= done_part(0);
+          done_part(1) <= done_part(0) and not done_part(1);
         end if;
       end process shift_out_proc;
   
