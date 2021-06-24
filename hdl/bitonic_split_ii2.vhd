@@ -10,7 +10,8 @@ entity bitonic_split_ii2 is
   generic (
     SORT_WIDTH : positive;
     BIT_WIDTH : positive;
-    COMPARISON_WIDTH: positive
+    COMPARISON_WIDTH: positive;
+    PLUS : std_logic
   );
   port (
     ap_clk : in std_logic;
@@ -19,8 +20,7 @@ entity bitonic_split_ii2 is
     in_a : in sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
     in_b : in sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
     out_a : out sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
-    out_b : out sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
-    plus : std_logic
+    out_b : out sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0)
   );
 end;
 
@@ -76,7 +76,7 @@ begin
             temp_a := sel_b;
             temp_b := sel_a;
           end if;
-          if plus = '1' then
+          if PLUS = '1' then
             out_a_shift(i) <= temp_a;
             out_b_shift(i) <= temp_b;
           else

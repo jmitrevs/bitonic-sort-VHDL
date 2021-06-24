@@ -17,7 +17,9 @@ entity bitonic_sort_ii2 is
   generic (
     SORT_WIDTH : positive;  -- must be a power of 2
     BIT_WIDTH : positive;
-    COMPARISON_WIDTH: positive := 16
+    COMPARISON_WIDTH: positive := 16;
+    -- The sort order. True means highest is at index 0.
+    PLUS : in std_logic := '1'
   );
   port (
     ap_clk : in std_logic;
@@ -25,9 +27,7 @@ entity bitonic_sort_ii2 is
     ap_done : out std_logic;
     ap_ready : out std_logic;
     sort_inputs : in sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
-    sort_outputs : out sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
-    -- The sort order. True means highest is at index 0.
-    plus : in std_logic := '1'
+    sort_outputs : out sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0)
   );
 end;
 
@@ -89,7 +89,8 @@ begin
       generic map (
         SORT_WIDTH => SORT_WIDTH_2,
         BIT_WIDTH => BIT_WIDTH,
-        COMPARISON_WIDTH => COMPARISON_WIDTH
+        COMPARISON_WIDTH => COMPARISON_WIDTH,
+        PLUS => PLUS
       )
       port map (
         ap_clk => ap_clk,
@@ -98,8 +99,7 @@ begin
         in_a => intermediate_shr(1),
         in_b => intermediate_shr(0),
         out_a => sort_outputs(SORT_WIDTH-1 downto SORT_WIDTH_2),
-        out_b => sort_outputs(SORT_WIDTH_2-1 downto 0),
-        plus => plus
+        out_b => sort_outputs(SORT_WIDTH_2-1 downto 0)
       );
 
     else generate

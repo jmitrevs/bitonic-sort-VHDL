@@ -28,7 +28,8 @@ begin
   generic map (
     SORT_WIDTH => WIDTH,
     BIT_WIDTH => BIT_WIDTH,
-    COMPARISON_WIDTH => COMPARISON_WIDTH
+    COMPARISON_WIDTH => COMPARISON_WIDTH,
+    PLUS => '1'
   )
   port map (
     ap_clk => ap_clk,
@@ -37,8 +38,7 @@ begin
     in_a => in_a,
     in_b => in_b,
     out_a => out_a,
-    out_b => out_b,
-    plus => '1'
+    out_b => out_b
   );
 
   ap_clk <= not ap_clk after 4.167 ns;

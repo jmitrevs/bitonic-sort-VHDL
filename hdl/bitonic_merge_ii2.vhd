@@ -19,7 +19,8 @@ entity bitonic_merge_ii2 is
   generic (
     SORT_WIDTH : positive;
     BIT_WIDTH : positive;
-    COMPARISON_WIDTH: positive
+    COMPARISON_WIDTH: positive;
+    PLUS : in std_logic
   );
   port (
     ap_clk : in std_logic;
@@ -28,8 +29,7 @@ entity bitonic_merge_ii2 is
     in_a : in sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
     in_b : in sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
     out_a : out sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
-    out_b : out sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
-    plus : in std_logic
+    out_b : out sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0)
   );
 end;
 
@@ -53,7 +53,8 @@ begin
       generic map (
         SORT_WIDTH => SORT_WIDTH,
         BIT_WIDTH => BIT_WIDTH,
-        COMPARISON_WIDTH => COMPARISON_WIDTH
+        COMPARISON_WIDTH => COMPARISON_WIDTH,
+        PLUS => PLUS
       )
       port map (
         ap_clk => ap_clk,
@@ -62,8 +63,7 @@ begin
         in_a => in_a,
         in_b => in_b,
         out_a => intermed_a,
-        out_b => intermed_b,
-        plus => plus
+        out_b => intermed_b
       );
 
       intermed_proc : process (ap_clk)
@@ -88,7 +88,7 @@ begin
         in_b => intermed(SORT_WIDTH_2-1 downto 0),
         out_a => out_part(0)(SORT_WIDTH-1 downto SORT_WIDTH_2),
         out_b => out_part(0)(SORT_WIDTH_2-1 downto 0),
-        plus => plus
+        plus => PLUS
       );
 
       ap_done <= and done_part;
@@ -119,7 +119,7 @@ begin
         in_b => in_b,
         out_a => out_a,
         out_b => out_b,
-        plus => plus
+        plus => PLUS
       );
     end generate recursive_gen; 
   
