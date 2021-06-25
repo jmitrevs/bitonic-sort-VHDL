@@ -61,7 +61,7 @@ begin
       begin
 
         if rising_edge(ap_clk) then
-          if ap_start = '1' then
+          if en_out_shr(0) = '0' then
             sel_a := in_a(SORT_WIDTH_2 + i);
             sel_b := in_b(SORT_WIDTH_2 + i);
           else
