@@ -8,8 +8,7 @@ entity bitonic_split is
   generic (
     SORT_WIDTH : positive;
     BIT_WIDTH : positive;
-    COMPARISON_WIDTH: positive;
-    PLUS : boolean
+    COMPARISON_WIDTH: positive
   );
   port (
     ap_clk : in std_logic;
@@ -18,7 +17,8 @@ entity bitonic_split is
     in_a : in sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
     in_b : in sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
     out_a : out sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
-    out_b : out sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0)
+    out_b : out sort_inputs_t(SORT_WIDTH - 1 downto 0)(BIT_WIDTH - 1 downto 0);
+    plus : std_logic
   );
 end;
 
@@ -38,7 +38,7 @@ begin
           temp_a := in_b(i);
           temp_b := in_a(i);
         end if;
-        if PLUS then
+        if plus = '1' then
           out_a(i) <= temp_a;
           out_b(i) <= temp_b;
         else

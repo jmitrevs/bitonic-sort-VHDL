@@ -18,29 +18,32 @@ architecture behavioral of bitonic_sort_TB is
   signal ap_clk : std_logic := '0';
   signal ap_start : std_logic := '0';
   signal ap_done : std_logic;
+  signal ap_ready : std_logic;
   signal sort_inputs : sort_inputs_t(WIDTH-1 downto 0)(BIT_WIDTH-1 downto 0) := (others => (others => '0'));
   signal sort_outputs : sort_inputs_t(WIDTH-1 downto 0)(BIT_WIDTH-1 downto 0);
 
 begin
-  DUV:  entity work.bitonic_sort
+  DUV:  entity work.bitonic_sort_ii2
   generic map (
     SORT_WIDTH => WIDTH,
     BIT_WIDTH => BIT_WIDTH,
-    COMPARISON_WIDTH => COMPARISON_WIDTH,
-    PLUS => true
+    COMPARISON_WIDTH => COMPARISON_WIDTH
   )
   port map (
     ap_clk => ap_clk,
     ap_start => ap_start,
     ap_done => ap_done,
+    ap_ready => ap_ready,
     sort_inputs => sort_inputs,
     sort_outputs => sort_outputs
   );
 
-  ap_clk <= not ap_clk after 4.167 ns;
+  ap_clk <= not ap_clk after 5 ns;
 
   stimuli: process
   begin
+    wait until ap_clk'event and ap_clk = '1';
+    wait until ap_clk'event and ap_clk = '1';
     sort_inputs(15) <= 64ux"2e";
     sort_inputs(14) <= 64ux"2ae";
     sort_inputs(13) <= 64ux"35";
@@ -53,12 +56,15 @@ begin
     sort_inputs(6) <= 64ux"62";
     sort_inputs(5) <= 64ux"772";
     sort_inputs(4) <= 64ux"4462";
-    sort_inputs(3) <= 64ux"9";
-    sort_inputs(2) <= 64ux"23";
+
+    sort_inputs(3) <= 64ux"23";
+    sort_inputs(2) <= 64ux"9";
     sort_inputs(1) <= 64ux"25";
     sort_inputs(0) <= 64ux"4";
     ap_start <= '1';
-    wait until ap_clk = '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
     sort_inputs(15) <= 64ux"12e";
     sort_inputs(14) <= 64ux"12ae";
     sort_inputs(13) <= 64ux"135";
@@ -79,8 +85,50 @@ begin
     sort_inputs(1) <= 64ux"25";
     sort_inputs(0) <= 64ux"9";
     ap_start <= '1';
-    wait until ap_clk = '1';
-    wait for 150 ns;
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '0';
+    wait until ap_clk'event and ap_clk = '1';
+    ap_start <= '1';
     std.env.finish;
   end process stimuli;
 
@@ -95,3 +143,4 @@ begin
   end process checker; 
 
 end architecture behavioral;
+ 

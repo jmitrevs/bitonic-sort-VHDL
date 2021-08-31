@@ -15,16 +15,16 @@ entity bitonic_sort is
   generic (
     SORT_WIDTH : positive;  -- must be a power of 2
     BIT_WIDTH : positive;
-    COMPARISON_WIDTH: positive := 16;
-   -- The sort order. True means highest is at index 0.
-    PLUS: boolean := true
+    COMPARISON_WIDTH: positive := 16
   );
   port (
     ap_clk : in std_logic;
     ap_start : in std_logic;
     ap_done : out std_logic;
     sort_inputs : in sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
-    sort_outputs : out sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0)
+    sort_outputs : out sort_inputs_t(SORT_WIDTH-1 downto 0)(BIT_WIDTH - 1 downto 0);
+    -- The sort order. True means highest is at index 0.
+    plus : in std_logic := '1'
   );
 end;
 
@@ -41,38 +41,37 @@ begin
       generic map (
         SORT_WIDTH => SORT_WIDTH_2,
         BIT_WIDTH => BIT_WIDTH,
-        COMPARISON_WIDTH => COMPARISON_WIDTH,
-        PLUS => true
+        COMPARISON_WIDTH => COMPARISON_WIDTH
       )
       port map (
         ap_clk => ap_clk,
         ap_start => ap_start,
         ap_done => intermediate_enable,
         sort_inputs => sort_inputs(SORT_WIDTH-1 downto SORT_WIDTH_2),
-        sort_outputs => intermed_a
+        sort_outputs => intermed_a,
+        plus => '1'
       );
 
       sortm_inst: entity work.bitonic_sort
       generic map (
         SORT_WIDTH => SORT_WIDTH_2,
         BIT_WIDTH => BIT_WIDTH,
-        COMPARISON_WIDTH => COMPARISON_WIDTH,
-        PLUS => false
+        COMPARISON_WIDTH => COMPARISON_WIDTH
       )
       port map (
         ap_clk => ap_clk,
         ap_start => ap_start,
         ap_done => open,
         sort_inputs => sort_inputs(SORT_WIDTH_2-1 downto 0),
-        sort_outputs => intermed_b
+        sort_outputs => intermed_b,
+        plus => '0'
       );
 
       merge_inst: entity work.bitonic_merge
       generic map (
         SORT_WIDTH => SORT_WIDTH_2,
         BIT_WIDTH => BIT_WIDTH,
-        COMPARISON_WIDTH => COMPARISON_WIDTH,
-        PLUS => PLUS
+        COMPARISON_WIDTH => COMPARISON_WIDTH
       )
       port map (
         ap_clk => ap_clk,
@@ -81,7 +80,8 @@ begin
         in_a => intermed_a,
         in_b => intermed_b,
         out_a => sort_outputs(SORT_WIDTH-1 downto SORT_WIDTH_2),
-        out_b => sort_outputs(SORT_WIDTH_2-1 downto 0)
+        out_b => sort_outputs(SORT_WIDTH_2-1 downto 0),
+        plus => plus
       );
 
     else generate
